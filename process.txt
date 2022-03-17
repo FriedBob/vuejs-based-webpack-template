@@ -1,0 +1,55 @@
+npm init -y
+
+npm i -D webpack webpack-cli webpack-dev-server@next        // @next로 cli 와 dev-server 버전을 관계시킴
+
+"dev": "webpack-dev-server --mode development",             // package.json script 부분에 작성
+"build": "webpack --mode production"                        // 상: parcel index.html과 동일 하: parcel build index.html과 동일
+                                                            // webpack : 기본패키지, webpack-cli : webpack의 기능을 cli로 이용하기위한 인터페이스 webpack-dev-server : 개발단계에서 서버를 더 편하게 열기위한 패키지
+                                                            // --mode development,production : 개발모드를 명시
+
+npm i -D html-webpack-plugin                                // webpack의 시작경로를 index.html로 하기위함
+npm i -D copy-webpack-plugin                                // 정적 파일 연결
+
+npm i -D css-loader style-loader                            // main.js에 import한 css를 webpack이 읽을 수 있게 함 -> 이경우 html에 .css를 link할 필요가 없는것을 유의
+
+npm i -D sass-loader sass                                   // css에 추가로 scss-loader로 scss를 읽어낼수 있게하고 sass가 그 읽을수 있는 기능을 제공
+
+npm i -D postcss autoprefixer postcss-loader                // webpack에서 auto-prefixer 기능 제공을 하는 모듈
+
+package.json에 "browserslist":[
+              "> 1%",
+             "last 2 versions"
+             ]                  항목 추가
+
+.postcssrc.js 작성                                          // autoprefixer를 plugin으로써 (require)가져와서 postcss의 plugin 배열에 삽입
+
+npm i -D @babel/core @babel/preset-env @babel/plugin-transform-runtime          // babel 을 webpack에 활용하기위한 npm 명령어
+npm i -D babel-loader                                                           // babel 기능을 load할 수 있게 함
+
+.babelrc.js 작성
+
+----------------------------------- 이후는 vuejs 기반으로 구성 및 변경하는 과정 ------------------------------------------------------------
+--------------이 세팅과정은 vue의 기본설정으로 프로젝트를 생성하는것이 아닌 webpack에서 제로베이스로 완전히 수동구성을 할 때 필요한 과정임
+
+js 폴더 삭제, src 폴더 생성 후 내부에 App.vue 파일 생성
+webpack.config.js의 entry 부분 js/ -> src/로
+
+npm i vue@next                                                  // vue 3.0 version 설치 (@next 안붙이면 2.0이 설치됨) , Vue의 문법을 해석하기 위한 패키지 
+                                                                // 추가적으로 vue 확장자 파일을 프로젝트에서 관리하려면 webpack과 관련된 패키지 설치해야함
+
+npm i -D vue-loader@next vue-style-loader @vue/compiler-sfc     // 3번째는 실제로 vue파일을 변환해서 브라우저에서 동작할 수 있는 형태로 바꿔줌
+
+webpack.config.js 의 module -> rules에 vue 관련 test와 로더 작성
+    VueLoaderPlugin require 후 plugin에 생성자 함수로 작성
+
+components 폴더 생성, static 폴더의 images 폴더를 src 폴더로 삽입 후 이름을 assets로 변경
+
+npm i -D file-loader                                            // 특정한 파일들을 읽어들여서 브라우저에 출력시켜 줄 수 있는 webpack의 loader
+webpack.config.js에서 module->rules에 확장자명과 file-loader 작성
+resolve에 alias(경로별칭)으로 ~ 추가
+
+------------------------------- ESLint 설정 -----------------------------------------------------------------------------------------------
+
+npm i -D eslint eslint-plugin-vue babel-eslint
+
+최상위 경로에 .eslintrc.js 파일 생성
